@@ -50,6 +50,8 @@ main(void)
   Simulation_Run_Ptr simulation_run;
   Simulation_Run_Data data;
 
+  FILE * pSave;
+  pSave  = fopen("output/packet_vs_mean_delay.txt", "w");
   /*
    * Declare and initialize our random number generator seeds defined in
    * simparameters.h
@@ -116,10 +118,10 @@ main(void)
      * Output results and clean up after ourselves.
      */
 
-    output_results(simulation_run);
+    output_results(simulation_run, &pSave);
     cleanup_memory(simulation_run);
   }
-
+  fclose(pSave);
   getchar();   /* Pause before finishing. */
   return 0;
 }

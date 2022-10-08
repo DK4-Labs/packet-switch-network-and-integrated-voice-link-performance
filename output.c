@@ -70,7 +70,7 @@ output_progress_msg_to_screen(Simulation_Run_Ptr simulation_run)
  */
 
 void
-output_results(Simulation_Run_Ptr simulation_run)
+output_results(Simulation_Run_Ptr simulation_run, FILE** writeFile)
 {
   double xmtted_fraction;
   Simulation_Run_Data_Ptr data;
@@ -93,6 +93,8 @@ output_results(Simulation_Run_Ptr simulation_run)
 	 1e3*data->accumulated_delay/data->number_of_packets_processed);
 
   printf("\n");
+
+  fprintf(*writeFile, "%d, %ld, %.2f \n", data->random_seed, data->arrival_count ,1e3*data->accumulated_delay/data->number_of_packets_processed);
 }
 
 

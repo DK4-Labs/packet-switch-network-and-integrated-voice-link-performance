@@ -85,7 +85,7 @@ main(void)
     data.number_of_packets_processed = 0;
     data.accumulated_delay = 0.0;
     data.random_seed = random_seed;
- 
+    data.number_above_20_ms = 0.0;
     /* 
      * Create the packet buffer and transmission link, declared in main.h.
      */

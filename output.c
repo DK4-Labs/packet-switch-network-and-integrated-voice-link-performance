@@ -94,7 +94,7 @@ output_results(Simulation_Run_Ptr simulation_run, FILE** writeFile)
 
   printf("\n");
 
-  fprintf(*writeFile, "%d, %ld, %.2f \n", data->random_seed, data->arrival_count ,1e3*data->accumulated_delay/data->number_of_packets_processed);
+  fprintf(*writeFile, "%.3f, %.2f \n",  (double) PACKET_ARRIVAL_RATE,1e3*data->accumulated_delay/data->number_of_packets_processed);
 }
 
 

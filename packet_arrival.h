@@ -38,9 +38,17 @@
 
 void
 packet_arrival_event(Simulation_Run_Ptr, void*);
+void
+packet_arrival_event_switch_2(Simulation_Run_Ptr, void*);
+void
+packet_arrival_event_switch_3(Simulation_Run_Ptr, void*);
+void
+packet_arrival_event_switch_2_no_reschedule(Simulation_Run_Ptr, void*);
+void
+packet_arrival_event_switch_3_no_reschedule(Simulation_Run_Ptr, void*);
 
 long
-schedule_packet_arrival_event(Simulation_Run_Ptr, double);
+schedule_packet_arrival_event(Simulation_Run_Ptr, double, unsigned);
 
 /******************************************************************************/
 

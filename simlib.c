@@ -114,9 +114,9 @@ void simulation_run_set_time (Simulation_Run_Ptr this_simulation_run,
  */
 
 void *
-simulation_run_data (Simulation_Run_Ptr this_simulation_run)
+simulation_run_data (Simulation_Run_Ptr this_simulation_run, unsigned index)
 {
-  return this_simulation_run->data;
+  return this_simulation_run->data + (56 * index);
 }
 
 /*

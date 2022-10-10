@@ -41,7 +41,7 @@ output_progress_msg_to_screen(Simulation_Run_Ptr simulation_run)
   double percentage_done;
   Simulation_Run_Data_Ptr data;
 
-  data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run);
+  data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run, 0);
 
   data->blip_counter++;
 
@@ -75,28 +75,35 @@ output_results(Simulation_Run_Ptr simulation_run, FILE * writeFile)
   double xmtted_fraction;
   Simulation_Run_Data_Ptr data;
 
-  data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run);
+  for (unsigned i=0; i<3u; i++)
+  {
+    data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run, i);
 
-  printf("\n");
-  printf("Random Seed = %d \n", data->random_seed);
-  printf("Packet arrival count = %ld \n", data->arrival_count);
+    printf("\n");
+    printf("Random Seed = %d \n", data->random_seed);
+    printf("Packet arrival count = %ld \n", data->arrival_count);
 
-  xmtted_fraction = (double) data->number_of_packets_processed /
-    data->arrival_count;
+    xmtted_fraction = (double) data->number_of_packets_processed /
+      data->arrival_count;
 
-  printf("Transmitted packet count  = %ld (Service Fraction = %.5f)\n",
-	 data->number_of_packets_processed, xmtted_fraction);
+    printf("Transmitted packet count  = %ld (Service Fraction = %.5f)\n",
+    data->number_of_packets_processed, xmtted_fraction);
 
-  printf("Arrival rate = %.3f packets/second \n", (double) PACKET_ARRIVAL_RATE);
+    if (i)
+      printf("Arrival rate = %.3f packets/second \n", (double) PACKET_ARRIVAL_RATE_SWITCH_2);
+    else
+      printf("Arrival rate = %.3f packets/second \n", (double) PACKET_ARRIVAL_RATE);
 
-  printf("Mean Delay (msec) = %.2f \n",
-	 1e3*data->accumulated_delay/data->number_of_packets_processed);
 
-  printf("Delay Probability = %.2f %%\n", (1e2 * (double)data->number_above_20_ms)/data->number_of_packets_processed);
+    printf("Mean Delay (msec) = %.2f \n",
+    1e3*data->accumulated_delay/data->number_of_packets_processed);
 
-  printf("\n");
+    printf("Delay Probability = %.2f %%\n", (1e2 * (double)data->number_above_20_ms)/data->number_of_packets_processed);
 
-  fprintf(writeFile, "%d, %ld, %.2f \n", data->random_seed, data->arrival_count ,1e3*data->accumulated_delay/data->number_of_packets_processed);
+    printf("\n");
+
+    fprintf(writeFile, "%d, %ld, %.2f \n", data->random_seed, data->arrival_count ,1e3*data->accumulated_delay/data->number_of_packets_processed);
+  }
 }
 
 

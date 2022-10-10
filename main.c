@@ -48,7 +48,7 @@ int
 main(void)
 {
   Simulation_Run_Ptr simulation_run;
-  Simulation_Run_Data data;
+  Simulation_Run_Data data[3];
 
   FILE * pSave;
   pSave  = fopen("output/packet_vs_mean_delay.txt", "w+");
@@ -85,18 +85,21 @@ main(void)
      * Initialize the simulation_run data variables, declared in main.h.
      */
     
-    data.blip_counter = 0;
-    data.arrival_count = 0;
-    data.number_of_packets_processed = 0;
-    data.accumulated_delay = 0.0;
-    data.random_seed = random_seed;
-    data.number_above_20_ms = 0u;
-    /* 
-     * Create the packet buffer and transmission link, declared in main.h.
-     */
+    for (int i=0; i<3; i++)
+    {
+      data[i].blip_counter = 0;
+      data[i].arrival_count = 0;
+      data[i].number_of_packets_processed = 0;
+      data[i].accumulated_delay = 0.0;
+      data[i].random_seed = random_seed;
+      data[i].number_above_20_ms = 0u;
+      /* 
+      * Create the packet buffer and transmission link, declared in main.h.
+      */
 
-    data.buffer = fifoqueue_new();
-    data.link   = server_new();
+      data[i].buffer = fifoqueue_new();
+      data[i].link   = server_new();
+    }
 
     /* 
      * Set the random number generator seed for this run.
@@ -109,13 +112,17 @@ main(void)
      */
 
     schedule_packet_arrival_event(simulation_run, 
-				  simulation_run_get_time(simulation_run));
+				  simulation_run_get_time(simulation_run), 0);
+    schedule_packet_arrival_event(simulation_run, 
+				  simulation_run_get_time(simulation_run), 1);
+    schedule_packet_arrival_event(simulation_run, 
+				  simulation_run_get_time(simulation_run), 2);
 
     /* 
      * Execute events until we are finished. 
      */
 
-    while(data.number_of_packets_processed < RUNLENGTH) {
+    while(!(data[1].number_of_packets_processed >= RUNLENGTH) && !(data[2].number_of_packets_processed >= RUNLENGTH)) {
       simulation_run_execute_event(simulation_run);
     }
 

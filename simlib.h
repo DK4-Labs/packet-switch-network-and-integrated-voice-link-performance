@@ -170,7 +170,7 @@ double
 simulation_run_get_time(Simulation_Run_Ptr);
 
 void *
-simulation_run_data(Simulation_Run_Ptr);
+simulation_run_data(Simulation_Run_Ptr, unsigned);
 
 void
 simulation_run_set_data(Simulation_Run_Ptr, void*);

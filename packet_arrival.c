@@ -40,12 +40,38 @@
 
 long int
 schedule_packet_arrival_event(Simulation_Run_Ptr simulation_run,
-			      double event_time)
+			      double event_time, unsigned switch_index)
 {
   Event event;
 
-  event.description = "Packet Arrival";
-  event.function = packet_arrival_event;
+  switch (switch_index)
+  {
+
+    case 0:
+      event.description = "Packet Arrival Switch 1";
+      event.function = packet_arrival_event;
+      break;
+
+    case 1:
+      event.description = "Packet Arrival Switch 2";
+      event.function = packet_arrival_event_switch_2;
+      break;
+
+    case 2:
+      event.description = "Packet Arrival Switch 3";
+      event.function = packet_arrival_event_switch_3;
+      break;
+
+    case 3:
+      event.description = "Packet Arrival Switch 2 no reschedule";
+      event.function = packet_arrival_event_switch_2_no_reschedule;
+      break;
+
+    case 4:
+      event.description = "Packet Arrival Switch 3 no reschedule";
+      event.function = packet_arrival_event_switch_3_no_reschedule;
+      break;
+  }
   event.attachment = (void *) NULL;
 
   return simulation_run_schedule_event(simulation_run, event, event_time);
@@ -66,12 +92,12 @@ packet_arrival_event(Simulation_Run_Ptr simulation_run, void * ptr)
   Simulation_Run_Data_Ptr data;
   Packet_Ptr new_packet;
 
-  data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run);
+  data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run, 0);
   data->arrival_count++;
 
   new_packet = (Packet_Ptr) xmalloc(sizeof(Packet));
   new_packet->arrive_time = simulation_run_get_time(simulation_run);
-  new_packet->service_time = get_packet_transmission_time();
+  new_packet->service_time = get_packet_transmission_time(0);
   new_packet->status = WAITING;
 
   /* 
@@ -82,7 +108,7 @@ packet_arrival_event(Simulation_Run_Ptr simulation_run, void * ptr)
   if(server_state(data->link) == BUSY) {
     fifoqueue_put(data->buffer, (void*) new_packet);
   } else {
-    start_transmission_on_link(simulation_run, new_packet, data->link);
+    start_transmission_on_link(simulation_run, new_packet, data->link, 0);
   }
 
   /* 
@@ -92,7 +118,133 @@ packet_arrival_event(Simulation_Run_Ptr simulation_run, void * ptr)
 
   schedule_packet_arrival_event(simulation_run,
 			simulation_run_get_time(simulation_run) +
-			exponential_generator((double) 1/PACKET_ARRIVAL_RATE));
+			exponential_generator((double) 1/PACKET_ARRIVAL_RATE), 0);
+}
+
+
+void
+packet_arrival_event_switch_2(Simulation_Run_Ptr simulation_run, void * ptr)
+{
+  Simulation_Run_Data_Ptr data;
+  Packet_Ptr new_packet;
+
+  data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run, 1);
+  data->arrival_count++;
+
+  new_packet = (Packet_Ptr) xmalloc(sizeof(Packet));
+  new_packet->arrive_time = simulation_run_get_time(simulation_run);
+  new_packet->service_time = get_packet_transmission_time(1);
+  new_packet->status = WAITING;
+
+  /* 
+   * Start transmission if the data link is free. Otherwise put the packet into
+   * the buffer.
+   */
+
+  if(server_state(data->link) == BUSY) {
+    fifoqueue_put(data->buffer, (void*) new_packet);
+  } else {
+    start_transmission_on_link(simulation_run, new_packet, data->link, 1);
+  }
+
+  /* 
+   * Schedule the next packet arrival. Independent, exponentially distributed
+   * interarrival times gives us Poisson process arrivals.
+   */
+
+  schedule_packet_arrival_event(simulation_run,
+			simulation_run_get_time(simulation_run) +
+			exponential_generator((double) 1/PACKET_ARRIVAL_RATE_SWITCH_2), 1);
+}
+
+
+void
+packet_arrival_event_switch_2_no_reschedule(Simulation_Run_Ptr simulation_run, void * ptr)
+{
+  Simulation_Run_Data_Ptr data;
+  Packet_Ptr new_packet;
+
+  data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run, 1);
+  data->arrival_count++;
+
+  new_packet = (Packet_Ptr) xmalloc(sizeof(Packet));
+  new_packet->arrive_time = simulation_run_get_time(simulation_run);
+  new_packet->service_time = get_packet_transmission_time(1);
+  new_packet->status = WAITING;
+
+  /* 
+   * Start transmission if the data link is free. Otherwise put the packet into
+   * the buffer.
+   */
+
+  if(server_state(data->link) == BUSY) {
+    fifoqueue_put(data->buffer, (void*) new_packet);
+  } else {
+    start_transmission_on_link(simulation_run, new_packet, data->link, 1);
+  }
+}
+
+
+void
+packet_arrival_event_switch_3(Simulation_Run_Ptr simulation_run, void * ptr)
+{
+  Simulation_Run_Data_Ptr data;
+  Packet_Ptr new_packet;
+
+  data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run, 2);
+  data->arrival_count++;
+
+  new_packet = (Packet_Ptr) xmalloc(sizeof(Packet));
+  new_packet->arrive_time = simulation_run_get_time(simulation_run);
+  new_packet->service_time = get_packet_transmission_time(2);
+  new_packet->status = WAITING;
+
+  /* 
+   * Start transmission if the data link is free. Otherwise put the packet into
+   * the buffer.
+   */
+
+  if(server_state(data->link) == BUSY) {
+    fifoqueue_put(data->buffer, (void*) new_packet);
+  } else {
+    start_transmission_on_link(simulation_run, new_packet, data->link, 2);
+  }
+
+  /* 
+   * Schedule the next packet arrival. Independent, exponentially distributed
+   * interarrival times gives us Poisson process arrivals.
+   */
+
+  schedule_packet_arrival_event(simulation_run,
+			simulation_run_get_time(simulation_run) +
+			exponential_generator((double) 1/PACKET_ARRIVAL_RATE_SWITCH_3), 2);
+}
+
+
+void
+packet_arrival_event_switch_3_no_reschedule(Simulation_Run_Ptr simulation_run, void * ptr)
+{
+  Simulation_Run_Data_Ptr data;
+  Packet_Ptr new_packet;
+
+  data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run, 2);
+  data->arrival_count++;
+
+  new_packet = (Packet_Ptr) xmalloc(sizeof(Packet));
+  new_packet->arrive_time = simulation_run_get_time(simulation_run);
+  new_packet->service_time = get_packet_transmission_time(2);
+  new_packet->status = WAITING;
+
+  /* 
+   * Start transmission if the data link is free. Otherwise put the packet into
+   * the buffer.
+   */
+
+  if(server_state(data->link) == BUSY) {
+    fifoqueue_put(data->buffer, (void*) new_packet);
+  } else {
+    start_transmission_on_link(simulation_run, new_packet, data->link, 2);
+  }
 }
 
 

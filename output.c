@@ -75,6 +75,8 @@ output_results(Simulation_Run_Ptr simulation_run, FILE * writeFile)
   double xmtted_fraction;
   Simulation_Run_Data_Ptr data;
 
+  double mean_delay[3];
+
   for (unsigned i=0; i<3u; i++)
   {
     data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run, i);
@@ -94,7 +96,7 @@ output_results(Simulation_Run_Ptr simulation_run, FILE * writeFile)
     else
       printf("Arrival rate = %.3f packets/second \n", (double) PACKET_ARRIVAL_RATE);
 
-
+    mean_delay[i] = 1e3*data->accumulated_delay/data->number_of_packets_processed;
     printf("Mean Delay (msec) = %.2f \n",
     1e3*data->accumulated_delay/data->number_of_packets_processed);
 
@@ -102,8 +104,8 @@ output_results(Simulation_Run_Ptr simulation_run, FILE * writeFile)
 
     printf("\n");
 
-    fprintf(writeFile, "%d, %ld, %.2f \n", data->random_seed, data->arrival_count ,1e3*data->accumulated_delay/data->number_of_packets_processed);
   }
+  fprintf(writeFile, "%.2f, %.5f, %.5f, %.5f \n", PROB1_2, mean_delay[0] + (mean_delay[1] + mean_delay[2])/2.0,mean_delay[1],mean_delay[2]);
 }
 
 

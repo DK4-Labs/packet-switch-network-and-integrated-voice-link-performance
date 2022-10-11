@@ -34,7 +34,7 @@
 #define PACKET_LENGTH 1000 /* bits */
 #define LINK_BIT_RATE 2e6 /* bits per second */
 #define RUNLENGTH 10e6 /* packets */
-#define PROB1_2 (0.6)
+#define PROB1_2 (0.9)
 
 /* Comma separated list of random seeds to run. */
 #define RANDOM_SEED_LIST 400191540, 400175089, 400186733, 50123, 3204130, 34012035, 4301324, 6430503

@@ -43,15 +43,25 @@ typedef struct _simulation_run_data_
   double accumulated_delay;
   unsigned random_seed;
   unsigned int number_above_20_ms;
+  unsigned long number_of_data_packets_processed;
+  unsigned long number_of_voice_packets_processed;
+  double data_accumulated_delay;
+  double voice_accumulated_delay;
 } Simulation_Run_Data, * Simulation_Run_Data_Ptr;
 
 typedef enum {XMTTING, WAITING} Packet_Status;
+
+typedef enum
+{
+  DATA = 0,
+  VOICE
+} Packet_Type;
 
 typedef struct _packet_ 
 {
   double arrive_time;
   double service_time;
-  int source_id;
+  Packet_Type source_id;
   int destination_id;
   Packet_Status status;
 } Packet, * Packet_Ptr;

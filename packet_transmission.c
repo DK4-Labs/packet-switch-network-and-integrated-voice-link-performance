@@ -79,6 +79,16 @@ end_packet_transmission_event(Simulation_Run_Ptr simulation_run, void * link)
 
   /* Collect statistics. */
   data->number_of_packets_processed++;
+  if (this_packet->source_id == DATA)
+  {
+    data->number_of_data_packets_processed++;
+    data->data_accumulated_delay += (simulation_run_get_time(simulation_run) - this_packet->arrive_time);
+  }
+  else if(this_packet->source_id == VOICE)
+  {
+    data->number_of_voice_packets_processed++;
+    data->voice_accumulated_delay += (simulation_run_get_time(simulation_run) - this_packet->arrive_time);
+  }
   data->accumulated_delay += simulation_run_get_time(simulation_run) - 
     this_packet->arrive_time;
   if(1e3* (simulation_run_get_time(simulation_run) - this_packet->arrive_time) > 20)

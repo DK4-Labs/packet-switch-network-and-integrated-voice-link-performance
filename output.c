@@ -86,17 +86,26 @@ output_results(Simulation_Run_Ptr simulation_run, FILE * writeFile)
 
   printf("Transmitted packet count  = %ld (Service Fraction = %.5f)\n",
 	 data->number_of_packets_processed, xmtted_fraction);
+  printf("Transmitted data packet count  = %lu\n",
+	 data->number_of_data_packets_processed);
+  printf("Transmitted voice packet count  = %lu\n",
+	 data->number_of_voice_packets_processed);
 
   printf("Arrival rate = %.3f packets/second \n", (double) PACKET_ARRIVAL_RATE);
 
   printf("Mean Delay (msec) = %.2f \n",
 	 1e3*data->accumulated_delay/data->number_of_packets_processed);
+  printf("Data Mean Delay (msec) = %.2f \n",
+	 1e3*data->data_accumulated_delay/data->number_of_data_packets_processed);
+  printf("Voice Mean Delay (msec) = %.2f \n",
+	 1e3*data->voice_accumulated_delay/data->number_of_voice_packets_processed);
 
   printf("Delay Probability = %.2f %%\n", (1e2 * (double)data->number_above_20_ms)/data->number_of_packets_processed);
 
   printf("\n");
 
-  fprintf(writeFile, "%d, %ld, %.2f \n", data->random_seed, data->arrival_count ,1e3*data->accumulated_delay/data->number_of_packets_processed);
+  fprintf(writeFile, "%d, %.5f, %.5f\n", PACKET_ARRIVAL_RATE,1e3*data->data_accumulated_delay/data->number_of_data_packets_processed
+                                    ,1e3*data->voice_accumulated_delay/data->number_of_voice_packets_processed);
 }
 
 

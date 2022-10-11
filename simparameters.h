@@ -29,7 +29,9 @@
 /******************************************************************************/
 
 #define PACKET_ARRIVAL_RATE 400 /* packets per second */
-#define PACKET_LENGTH 2000 /* bits */
+#define PACKET_ARRIVAL_RATE_VOICE 50 /* packets per second */
+#define PACKET_LENGTH 500 /* bits */
+#define PACKET_LENGTH_VOICE ((160+62)*8) /* bits */
 #define LINK_BIT_RATE 1e6 /* bits per second */
 #define RUNLENGTH 10e6 /* packets */
 
@@ -37,6 +39,7 @@
 #define RANDOM_SEED_LIST 400191540, 400175089, 400186733, 50123, 3204130, 34012035, 4301324, 6430503
 
 #define PACKET_XMT_TIME ((double) PACKET_LENGTH/LINK_BIT_RATE)
+#define PACKET_XMT_TIME_VOICE ((double) PACKET_LENGTH_VOICE/LINK_BIT_RATE)
 #define BLIPRATE (RUNLENGTH/1000)
 
 /******************************************************************************/

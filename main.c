@@ -48,7 +48,7 @@ int
 main(void)
 {
   Simulation_Run_Ptr simulation_run;
-  Simulation_Run_Data data;
+  Simulation_Run_Data data = { 0 };
 
   FILE * pSave;
   pSave  = fopen("output/packet_vs_mean_delay.txt", "w+");
@@ -91,6 +91,10 @@ main(void)
     data.accumulated_delay = 0.0;
     data.random_seed = random_seed;
     data.number_above_20_ms = 0u;
+    data.number_of_data_packets_processed = 0ul;
+    data.number_of_voice_packets_processed = 0ul;
+    data.data_accumulated_delay = 0.0;
+    data.voice_accumulated_delay = 0.0;
     /* 
      * Create the packet buffer and transmission link, declared in main.h.
      */
@@ -109,6 +113,9 @@ main(void)
      */
 
     schedule_packet_arrival_event(simulation_run, 
+				  simulation_run_get_time(simulation_run));
+
+    schedule_packet_arrival_event_voice(simulation_run, 
 				  simulation_run_get_time(simulation_run));
 
     /* 

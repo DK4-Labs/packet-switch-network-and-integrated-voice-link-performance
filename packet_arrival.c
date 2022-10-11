@@ -44,8 +44,21 @@ schedule_packet_arrival_event(Simulation_Run_Ptr simulation_run,
 {
   Event event;
 
-  event.description = "Packet Arrival";
+  event.description = "Packet Arrival Data";
   event.function = packet_arrival_event;
+  event.attachment = (void *) NULL;
+
+  return simulation_run_schedule_event(simulation_run, event, event_time);
+}
+
+long int
+schedule_packet_arrival_event_voice(Simulation_Run_Ptr simulation_run,
+			      double event_time)
+{
+  Event event;
+
+  event.description = "Packet Arrival Voice";
+  event.function = packet_arrival_event_voice;
   event.attachment = (void *) NULL;
 
   return simulation_run_schedule_event(simulation_run, event, event_time);
@@ -73,6 +86,7 @@ packet_arrival_event(Simulation_Run_Ptr simulation_run, void * ptr)
   new_packet->arrive_time = simulation_run_get_time(simulation_run);
   new_packet->service_time = get_packet_transmission_time();
   new_packet->status = WAITING;
+  new_packet->source_id = DATA;
 
   /* 
    * Start transmission if the data link is free. Otherwise put the packet into
@@ -93,6 +107,42 @@ packet_arrival_event(Simulation_Run_Ptr simulation_run, void * ptr)
   schedule_packet_arrival_event(simulation_run,
 			simulation_run_get_time(simulation_run) +
 			exponential_generator((double) 1/PACKET_ARRIVAL_RATE));
+}
+
+
+void
+packet_arrival_event_voice(Simulation_Run_Ptr simulation_run, void * ptr)
+{
+  Simulation_Run_Data_Ptr data;
+  Packet_Ptr new_packet;
+
+  data = (Simulation_Run_Data_Ptr) simulation_run_data(simulation_run);
+  data->arrival_count++;
+
+  new_packet = (Packet_Ptr) xmalloc(sizeof(Packet));
+  new_packet->arrive_time = simulation_run_get_time(simulation_run);
+  new_packet->service_time = PACKET_XMT_TIME_VOICE;
+  new_packet->status = WAITING;
+  new_packet->source_id = VOICE;
+
+  /* 
+   * Start transmission if the data link is free. Otherwise put the packet into
+   * the buffer.
+   */
+
+  if(server_state(data->link) == BUSY) {
+    fifoqueue_put(data->buffer, (void*) new_packet);
+  } else {
+    start_transmission_on_link(simulation_run, new_packet, data->link);
+  }
+
+  /* 
+   * Schedule the next packet arrival. Independent, exponentially distributed
+   * interarrival times gives us Poisson process arrivals.
+   */
+
+  schedule_packet_arrival_event_voice(simulation_run,
+			simulation_run_get_time(simulation_run) + (1.0/PACKET_ARRIVAL_RATE_VOICE));
 }
 
 

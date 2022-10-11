@@ -99,7 +99,8 @@ main(void)
      * Create the packet buffer and transmission link, declared in main.h.
      */
 
-    data.buffer = fifoqueue_new();
+    data.data_buffer = fifoqueue_new();
+    data.voice_buffer = fifoqueue_new();
     data.link   = server_new();
 
     /* 
@@ -112,11 +113,12 @@ main(void)
      * Schedule the initial packet arrival for the current clock time (= 0).
      */
 
+    schedule_packet_arrival_event_voice(simulation_run, 
+	  		  simulation_run_get_time(simulation_run));
+
     schedule_packet_arrival_event(simulation_run, 
 				  simulation_run_get_time(simulation_run));
 
-    schedule_packet_arrival_event_voice(simulation_run, 
-				  simulation_run_get_time(simulation_run));
 
     /* 
      * Execute events until we are finished. 

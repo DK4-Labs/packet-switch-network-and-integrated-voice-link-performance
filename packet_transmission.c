@@ -107,8 +107,12 @@ end_packet_transmission_event(Simulation_Run_Ptr simulation_run, void * link)
    * out and transmit it immediately.
   */
 
-  if(fifoqueue_size(data->buffer) > 0) {
-    next_packet = (Packet_Ptr) fifoqueue_get(data->buffer);
+  if(fifoqueue_size(data->voice_buffer) > 0) {
+    next_packet = (Packet_Ptr) fifoqueue_get(data->voice_buffer);
+    start_transmission_on_link(simulation_run, next_packet, link);
+  }
+  else if(fifoqueue_size(data->data_buffer) > 0){
+    next_packet = (Packet_Ptr) fifoqueue_get(data->data_buffer);
     start_transmission_on_link(simulation_run, next_packet, link);
   }
 }
